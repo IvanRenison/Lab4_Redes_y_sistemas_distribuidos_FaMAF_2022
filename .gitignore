@@ -1,0 +1,16 @@
+.vscode/
+.settings/
+.metadata/
+
+results/
+out/
+
+.cmdenv-log
+.project
+.qtenvrc
+
+packet_m.*
+
+src/src
+*.exe
+*.json
