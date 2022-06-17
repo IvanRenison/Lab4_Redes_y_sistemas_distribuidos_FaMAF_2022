@@ -5,7 +5,7 @@
         <input pattern="Resultados_parte2_caso2/results/General-*.sca"/>
     </inputs>
     <charts>
-        <chart icon="icons/full/obj/linechart.png" id="1033589288" name="Tamaños de buffer" template="linechart_native" type="LINE">
+        <chart icon="icons/full/obj/linechart.png" id="877346618" name="Tamaños de buffer" template="linechart_native" type="LINE">
             <script><![CDATA[import math
 from omnetpp.scave import results, chart, utils
 
@@ -601,7 +601,7 @@ utils.export_data_if_needed(df, props)
             <property name="Plot.Caching" value="true"/>
             <property name="legend_prefer_result_titles" value="true"/>
             <property name="legend_manual" value="false"/>
-            <property name="yaxis_title" value=""/>
+            <property name="yaxis_title" value="Paquetes"/>
             <property name="legend_replacements" value=""/>
             <property name="Legend.Border" value="false"/>
             <property name="title" value="Tamaños de buffer"/>
@@ -617,7 +617,7 @@ utils.export_data_if_needed(df, props)
             <property name="legend_placement" value="upper right"/>
             <property name="plot.properties" value=""/>
             <property name="data_export_filename" value=""/>
-            <property name="xaxis_title" value=""/>
+            <property name="xaxis_title" value="Tiempo"/>
             <property name="Plot.BackgroundColor" value="white"/>
             <property name="grid_density" value="Major"/>
             <property name="yaxis_min" value=""/>
@@ -626,7 +626,7 @@ utils.export_data_if_needed(df, props)
             <property name="xaxis_min" value=""/>
             <property name="linewidth" value="1.5"/>
             <property name="legend_format" value=""/>
-            <property name="filter" value="type =~ vector AND name =~ &quot;Buffer Size&quot;&#10;"/>
+            <property name="filter" value="type =~ vector AND name =~ &quot;Buffer Size&quot;"/>
             <property name="X.Label.Wrap" value="true"/>
             <property name="vector_start_time" value=""/>
             <property name="linestyle" value="solid"/>
@@ -641,7 +641,7 @@ utils.export_data_if_needed(df, props)
             <property name="image_export_width" value="6"/>
             <property name="include_fields" value="false"/>
         </chart>
-        <chart icon="icons/full/obj/linechart.png" id="1763852117" name="Demora de paquetes recibidos" template="linechart_native" type="LINE">
+        <chart icon="icons/full/obj/linechart.png" id="439669842" name="Demora de paquetes recibidos" template="linechart_native" type="LINE">
             <script><![CDATA[import math
 from omnetpp.scave import results, chart, utils
 
@@ -1237,7 +1237,7 @@ utils.export_data_if_needed(df, props)
             <property name="Plot.Caching" value="true"/>
             <property name="legend_prefer_result_titles" value="true"/>
             <property name="legend_manual" value="false"/>
-            <property name="yaxis_title" value=""/>
+            <property name="yaxis_title" value="Tiempo"/>
             <property name="legend_replacements" value=""/>
             <property name="Legend.Border" value="false"/>
             <property name="title" value="Demora"/>
@@ -1253,7 +1253,7 @@ utils.export_data_if_needed(df, props)
             <property name="legend_placement" value="upper right"/>
             <property name="plot.properties" value=""/>
             <property name="data_export_filename" value=""/>
-            <property name="xaxis_title" value=""/>
+            <property name="xaxis_title" value="Tiempo"/>
             <property name="Plot.BackgroundColor" value="white"/>
             <property name="grid_density" value="Major"/>
             <property name="yaxis_min" value=""/>
