@@ -1,6 +1,10 @@
 # Enrutamiento y control de una red
 
-## Autores
+### Resumen
+
+En esta trabajo se estudian y comparan 2 algoritmos de enrutmaiento para redes anillo de tamaño fijo.
+
+### Autores
 
 - Fuentes, Tiffany
 - Renison, Iván
@@ -9,11 +13,11 @@
 ## Índice
 
 1. [Introducción](#introducción)
-1. [El enrutamiento naive](#el-enrutamiento-naive)
-1. [El enrutamiento mejorado](#el-enrutamiento-mejorado)
-    1. [Reconocimiento de la red](#reconocimiento-de-la-red)
-    1. [Enrutamiento de datagramas](#enrutamiento-de-datagramas)
-1. [Resultados](#resultados)
+2. [El enrutamiento naive](#el-enrutamiento-naive)
+3. [El enrutamiento mejorado](#el-enrutamiento-mejorado)
+   1. [Reconocimiento de la red](#reconocimiento-de-la-red)
+   2. [Enrutamiento de datagramas](#enrutamiento-de-datagramas)
+4. [Resultados](#resultados)
 
 ## Introducción
 
