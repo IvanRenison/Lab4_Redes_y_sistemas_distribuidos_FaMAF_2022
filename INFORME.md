@@ -37,7 +37,7 @@ El propósito del proyecto es comprender los distintos tipos de algoritmos de en
 
 ## Algoritmo naive
 
-En la simulación se utiliza una topografía en forma de anillo, para cada vecino se tienen 2 interfaces para comunicación, una para enviar mensajes y otro para recibir. En el algoritmo inicial todos los paquetes se envían a través del vecino a la izquierda del nodo, es decir, todos los paquetes se envían en la dirección contraria al sentido de las agujas del reloj. 
+En la simulación se utiliza una topografía en forma de anillo, para cada vecino se tienen 2 interfaces para comunicación, una para enviar mensajes y otro para recibir. En el algoritmo inicial todos los paquetes se envían a través del vecino a la izquierda del nodo, es decir, todos los paquetes se envían en la dirección contraria al sentido de las agujas del reloj.
 
 En este algoritmo inicial no hay ningún tipo de lógica para escoger el camino más óptimo, simplemente se envían todos los paquetes de la misma forma sin tomar en cuenta la distancia del enrutador de origen al enrutador del destino.
 
@@ -51,9 +51,9 @@ Inicialmente, antes de comenzar la transferencia de paquetes, cada enrutador gen
 
 La simplicidad del reconocimiento de red se da porque se sabe que la topología tiene forma de anillo, además se asume que los enrutadores están en orden, es decir, si hay 8 enrutadores los mismos están ordenados de forma que sus IDs son consecutivos. Se asume esto debido a que incluso si los enrutadores no estuviesen en orden, y por ende se tuviese que calcular la distancia a cada uno, el algoritmo seguiría funcionando de la misma manera, solamente se tendría que hacer un paso extra para conocer la distancia a cada enrutador.
 
-En caso de que fuese necesario conocer las distancias hacia los otros enrutadores, es decir que no se puede asumir un cierto orden, se realizaría de igual forma el primer paso de reconocimiento de red para saber cuantos enrutadores hay en la red, usando esto se sabe cuantas entradas se necesita para la tabla de reenvios (la cual se puede implementar con un arreglo, o un diccionario), luego de esto cada enrutador debe generar un paquete de aviso a la red, este paquete tiene como encabezados el ID del enrutador emisor, la cantidad de saltos que hace el paquete y un campo para la edad. La edad es la cantidad de saltos que puede dar el paquete antes de descartarse, se inicializa con el valor $cantidad de enrutadores - 1$ para que pase por todos los enrutadores de la red (excepto el que crea el paquete) y luego se descarte.
+En caso de que fuese necesario conocer las distancias hacia los otros enrutadores, es decir que no se puede asumir un cierto orden, se realizaría de igual forma el primer paso de reconocimiento de red para saber cuantos enrutadores hay en la red, usando esto se sabe cuantas entradas se necesita para la tabla de reenvios (la cual se puede implementar con un arreglo, o un diccionario), luego de esto cada enrutador debe generar un paquete de aviso a la red, este paquete tiene como encabezados el ID del enrutador emisor, la cantidad de saltos que hace el paquete y un campo para la edad. La edad es la cantidad de saltos que puede dar el paquete antes de descartarse, se inicializa con el valor $cantidad\ de\ enrutadores - 1$ para que pase por todos los enrutadores de la red (excepto el que crea el paquete) y luego se descarte.
 
-Cada vez que un enrutador recibe uno de estos paquetes, utilizando el campo del enrutador emisor puede registrar en la tabla de reenvíos la entrada correspondiente para el emisor del paquete, y utiliza el campo de saltos para saber a que distancia esta el enrutador emisor. Con estos paquetes todos los enrutadores van a conocer las distancias hacia los otros enrutadores de la red. 
+Cada vez que un enrutador recibe uno de estos paquetes, utilizando el campo del enrutador emisor puede registrar en la tabla de reenvíos la entrada correspondiente para el emisor del paquete, y utiliza el campo de saltos para saber a que distancia esta el enrutador emisor. Con estos paquetes todos los enrutadores van a conocer las distancias hacia los otros enrutadores de la red.
 
 ### Enrutamiento de datagramas
 
@@ -61,22 +61,51 @@ En esta parte se escoge el camino más óptimo (es decir el más corto), primero
 
 En algunos casos enviar un paquete por un camino o el otro es indistinto, porque por ambos caminos el costo del recorrido es el mismo, en este caso se escoge al azar por que camino enviar el paquete, de esta forma se distribuye la carga.
 
-En caso de que se utilizara la idea del aviso a la red para llenar una tabla de reenvíos para cada enrutador es todavía más fácil, como se tiene la distancia exacta, y se sabe que esta distancia es usando el camino en la dirección de las agujas del reloj, se verifica si  $cantidad\ de\ enrutadores - distancia < distancia$, de ser así quiere decir que el camino más corto esta en la dirección contraria a las agujas del reloj, de caso contrario quiere decir que el camino más corto es utilizando el sentido de las agujas del reloj. 
+En caso de que se utilizara la idea del aviso a la red para llenar una tabla de reenvíos para cada enrutador es todavía más fácil, como se tiene la distancia exacta, y se sabe que esta distancia es usando el camino en la dirección de las agujas del reloj, se verifica si  $cantidad\ de\ enrutadores - distancia < distancia$, de ser así quiere decir que el camino más corto esta en la dirección contraria a las agujas del reloj, de caso contrario quiere decir que el camino más corto es utilizando el sentido de las agujas del reloj.
 
 ## Resultados
 
 A continuación se realizará una comparación directa en el desempeño de ambos algoritmos en 2 casos de prueba distintos.
 
+Las métricas que seran analizadas son el tiempo que tarda cada nodo en recibir paquetes (Demora) y los tamaños que alcanza cada buffer de los nodos (Tamaños de buffer) durante el tiempo de simulación.
+
+Pero primero, recordemos lo que hace cada algoritmo.
+
+En resumidas cuentas, el algoritmo naive siempre mandará sus paquetes en *sentido reloj*, mientras que el algoritmo mejorado primero reconocerá la red y luego mandará cada paquete por el mejor camino.
+
+### Caso de estudio 1
+
 El primer caso de prueba se tienen 2 fuentes, `Nodo 0` y `Nodo 3`, y un resumidero, `Nodo 5` en un anillo de tamaño 8, revisando el [diagrama](#introducción) se puede ver que el mejor camino que puede tomar `Nodo 0` es en *sentido reloj*, mientras que para `Nodo 2` es *sentido contra-reloj*.
 
-| Métrica | Algoritmo Naive | Algoritmo mejorado |
-|--- |---|---|
-| Demora | ![Demora caso 1 naive](Gráficos_parte1_caso1/Demora%20de%20paquetes%20recibidos.svg) |   |
-| Tamaño de buffer | ![Tamaño caso 1 naive](Gráficos_parte1_caso1/Tamaos%20de%20buffer.svg) |   |
+| Algoritmo Naive | Algoritmo mejorado |
+|---|---|
+| ![Demora caso 1 naive](Gráficos_parte1_caso1/Demora%20de%20paquetes%20recibidos.svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso1/Demora%20de%20paquetes%20recibidos.svg) |
+ ![Tamaño caso 1 naive](Gráficos_parte1_caso1/Tamaos%20de%20buffer.svg) | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso1/Tamaos%20de%20buffer.svg) |
+
+Como se puede observar, la demora máxima en el algoritmo mejorado es un 10% de la del algoritmo naive. En principio esto se debe a que en el algoritmo naive no se elige la mejor ruta para mandar desde `Nodo 2` hasta `Nodo 5`, pero también sucede que en un tramo de la ruta se mandarán paquetes provenientes tanto de `Nodo 0`, como de `Nodo 2`, lo cuál genera mucho mas retraso.
+
+Para los tamaños de buffer se puede observar un fenómeno generado por la misma causa, en `Nodo 0` se generan paquetes listos para ser enviados, pero también es la ruta tomada por todos los paquetes enviados por `Nodo 5`, como consecuencia, el buffer de `Nodo 0` alcanza un tamaño muy elevado.
+
+Esto no es un problema para el algoritmo mejorado, ya que, como ambos nodos tienen distintos caminos óptimos no habrá ningún camino en común entre los paquetes generados por `Nodo 0` y `Nodo 2`, en consecuencia el máximo tamaño de buffer alcanzado por el algoritmo mejorado es el 5% de lo alcanzado por el algoritmo naive.
+
+Hasta ahora se mostró el diferente impacto en la red que genera cada algoritmo, en un caso simple, pero ¿Se contemplará un comportamiento parecido en un caso mas complejo?
+
+### Caso de estudio 2
+
+Ahora, `Nodo 5` seguirá siendo el único receptor en la red, pero todos los demás nodos serán emisores, como consecuencia esperable los buffers de los nodos se verán mucho mas ocupados que antes.
+
+| Algoritmo Naive | Algoritmo mejorado |
+|---|---|
+| ![Demora caso 1 naive](Gráficos_parte1_caso2/Demora%20de%20paquetes%20recibidos.svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso2/Demora%20de%20paquetes%20recibidos.svg) |
+ ![Tamaño caso 1 naive](Gráficos_parte1_caso2/Tamaos%20de%20buffer.svg) | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso2/Tamaos%20de%20buffer.svg) |
+
+Esta vez se puede contemplar que las escalas son mucho mas comparables a simple vista. En cuanto a la demora, se puede observar que los mejores casos con mínima demora son casi iguales, eso tiene sentido porque ambos tienen nodos adyacentes al destino, en el algoritmo mejorado se tienen mas valores rondando por los mejores casos porque habrán mas nodos cercanos al destino que usarán la ruta optima.
+
+Para los tamaños de buffer se puede ver que el algoritmo mejorado aprovecha mejor los buffers, en general, por los que transitaba mayor tráfico experimentan mucha menos carga, y los nodos por donde circulaban pocos paquetes poseen ahora una mayor carga.
 
 ## Discusiones
 
-Claramente para este proyecto el algoritmo escogido es bastante limitado, el hecho de poder calcular la cantidad de nodos en la red de una manera tan sencilla se debe a que la topología tiene forma de anillo, además sabiendo esto, sabemos que la red forma una circunferencia, por ende calcular el camino más corto también es bastante sencillo, y no hay necesidad de correr algún algoritmo para calcular el camino más corto como _Dijkstra_. 
+Claramente para este proyecto el algoritmo escogido es bastante limitado, el hecho de poder calcular la cantidad de nodos en la red de una manera tan sencilla se debe a que la topología tiene forma de anillo, además sabiendo esto, sabemos que la red forma una circunferencia, por ende calcular el camino más corto también es bastante sencillo, y no hay necesidad de correr algún algoritmo para calcular el camino más corto como _Dijkstra_.
 
 Para implementar el algoritmo para una red con una topología más general (como la del punto estrella), se debe realizar un algoritmo más complejo, ya que no es tan sencillo saber cuantos enrutadores hay en la red, también sería necesario crear y transmitir paquetes que brinden suficiente información sobre la red, para que cada enrutador pueda crear un grafo interno de la red y correr algún algoritmo como _Dijkstra_ sobre el mismo, de esta forma puede calcular el camino más corto a cada enrutador y colocarlo en una tabla de enrutamiento.
 
@@ -84,5 +113,5 @@ Para implementar el algoritmo para una red con una topología más general (como
 
 - [OMNeT++ Documentation](https://omnetpp.org/documentation/)
 - Andrew S. Tanenbaum (2013) Redes de computadoras. 5ta edición
-- Juan Fraire (2021) [Redes y Sistemas Distribuidos - Introducción a OMNeT++](https://www.youtube.com/watch?v=6J_0ZKquNWU&t=1766s) 
+- Juan Fraire (2021) [Redes y Sistemas Distribuidos - Introducción a OMNeT++](https://www.youtube.com/watch?v=6J_0ZKquNWU&t=1766s)
 - [Understanding .msg files in omnet++ and veins](https://stackoverflow.com/questions/65542635/understanding-msg-files-in-omnet-and-veins)
