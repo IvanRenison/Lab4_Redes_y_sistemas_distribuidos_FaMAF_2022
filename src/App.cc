@@ -10,7 +10,8 @@ using namespace omnetpp;
 class App: public cSimpleModule {
 private:
     cMessage *sendMsgEvent;
-    cStdDev delayStats;
+    int packetsSent;
+    int packetsReceived;
     cOutVector delayVector;
 public:
     App();
@@ -41,14 +42,15 @@ void App::initialize() {
     }
 
     // Initialize statistics
-    delayStats.setName("TotalDelay");
+    packetsSent = 0;
+    packetsReceived = 0;
     delayVector.setName("Delay");
 }
 
 void App::finish() {
     // Record statistics
-    recordScalar("Average delay", delayStats.getMean());
-    recordScalar("Number of packets", delayStats.getCount());
+    recordScalar("Sent packets", packetsSent);
+    recordScalar("Received packets", packetsReceived);
 }
 
 void App::handleMessage(cMessage *msg) {
@@ -64,6 +66,9 @@ void App::handleMessage(cMessage *msg) {
         // send to net layer
         send(pkt, "toNet$o");
 
+        // Update stats
+        packetsSent++;
+
         // compute the new departure time and schedule next sendMsgEvent
         simtime_t departureTime = simTime() + par("interArrivalTime");
         scheduleAt(departureTime, sendMsgEvent);
@@ -73,8 +78,8 @@ void App::handleMessage(cMessage *msg) {
     else {
         // compute delay and record statistics
         simtime_t delay = simTime() - msg->getCreationTime();
-        delayStats.collect(delay);
         delayVector.record(delay);
+        packetsReceived++;
         // delete msg
         delete (msg);
     }

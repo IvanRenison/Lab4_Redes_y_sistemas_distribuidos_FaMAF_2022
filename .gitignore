@@ -15,3 +15,5 @@ packet_m.*
 src/src
 *.exe
 *.json
+
+__pycache__
