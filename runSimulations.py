@@ -2,25 +2,50 @@ import os
 import shutil
 import sys
 
+def os_system_with_print(command):
+    print(f"$ {command}")
+    return os.system(command)
+
+def shutil_move_with_print(src, dst):
+    print(f"$ mv '{src}' '{dst}'")
+    shutil.move(src, dst)
+
 carpeta_código = "src"
 
-def carpeta_resultados(nombre_simulación: str):
+# Parametros variables para configurar en el .ini
+parametros_variables: dict = {
+    interArrivalTime:
+        f"Network.node[{{0, 2}}].app.interArrivalTime = exponential({interArrivalTime})"
+    for interArrivalTime in list(map(lambda x: round(x * 0.1, ndigits=2), range(91)))
+}
+
+parametros_gráficos_detallados = [1.0]
+
+# Chequear que los parametros_gráficos_detallados sean claves de parametros_variables
+assert all(map(lambda x: x in parametros_variables.keys(), parametros_gráficos_detallados))
+
+def carpeta_resultados(nombre_simulación):
     return f"Resultados_{nombre_simulación}"
 
-def carpeta_gráficos(nombre_simulación: str):
+def carpeta_resultados_parametro(parametro, nombre_simulación):
+    return f"{carpeta_resultados(nombre_simulación)}/{parametro}"
+
+def carpeta_gráficos(nombre_simulación):
     return f"Gráficos_{nombre_simulación}"
 
-def correr_simulaciones(nombre: str):
+def correr_simulaciones(nombre):
     """
         Corre las simulaciones, usa el argumento para el nombre de la carpeta de los resultados
     """
-    ejecutable = f"{carpeta_código}{os.sep}{carpeta_código}" # El make hace que el ejecutable tenga el mismo nombre que la carpeta en la que está
-    if os.name == "nt": # En windows agregar .exe
-        ejecutable += ".exe"
+    # Hacer make
+    os_system_with_print(f"make --directory '{carpeta_código}'")
 
-    omnet_ini = f"{carpeta_código}{os.sep}omnetpp.ini"
+    ejecutable = f"{carpeta_código}/{carpeta_código}" # El make hace que el ejecutable tenga el mismo nombre que la carpeta en la que está
 
-    omnet_output = f"{carpeta_código}{os.sep}results"
+    omnet_ini = f"{carpeta_código}/omnetpp.ini"
+    extra_ini = f"{carpeta_código}/extra.ini"
+
+    omnet_output = f"{carpeta_código}/results"
 
     # Chequer que existan los archivos y carpetas necesarios
     if not os.path.exists(ejecutable):
@@ -35,13 +60,22 @@ def correr_simulaciones(nombre: str):
     # Crear la carpeta para resultados
     os.mkdir(carpeta_resultados(nombre))
 
-    # Ejecutar la simulación
-    x = os.system(f".{os.sep}{ejecutable} -f {omnet_ini} -n {carpeta_código} -u Cmdenv")
-    if x != 0:
-        raise Exception(f"Error al ejecutar simulación '{ejecutable}'")
+    # Ejecutar lsa simulaciones
+    for n in parametros_variables.keys():
+        parametro = parametros_variables[n]
 
-    # Mover los resultados a la carpeta correcta
-    shutil.move(omnet_output, carpeta_resultados(nombre))
+        # Poner en un archivo la configuración del generationInterval
+        with open(extra_ini, "w") as f_extra_ini:
+            f_extra_ini.write(parametro)
+
+        x = os_system_with_print(f"./{ejecutable} -f {omnet_ini} -f {extra_ini} -n {carpeta_código} -u Cmdenv")
+        if x != 0:
+            raise Exception(f"Error al ejecutar simulación '{ejecutable}'")
+
+        # Mover los resultados a la carpeta correcta
+        shutil_move_with_print(omnet_output, carpeta_resultados_parametro(n, nombre))
+    
+    os.remove(extra_ini)
 
 def exportar_gráficos(nombre: str):
     """
@@ -61,23 +95,24 @@ def exportar_gráficos(nombre: str):
         lineas = f_general_anf.readlines()
 
     # Verificar que las lineas que se van a modificar sean de adentro del input
-    assert lineas[2] == f"    <inputs>{os.linesep}" and lineas[5] == f"    </inputs>{os.linesep}"
+    assert lineas[2] == f"    <inputs>\n" and lineas[5] == f"    </inputs>\n"
 
-    # modificar <input pattern="..."/> en general_anf
-    lineas[3] = f'        <input pattern="{carpeta_resultados(nombre)}/results/General-*.vec"/>{os.linesep}'
-    lineas[4] = f'        <input pattern="{carpeta_resultados(nombre)}/results/General-*.sca"/>{os.linesep}'
-    with open(general_anf, "w") as f_general_anf:
-        # Escribir las lineas
-        f_general_anf.writelines(lineas)
+    for n in parametros_gráficos_detallados:
+        # modificar <input pattern="..."/> en general_anf
+        lineas[3] = f'        <input pattern="{carpeta_resultados_parametro(n, nombre)}/General-*.vec"/>\n'
+        lineas[4] = f'        <input pattern="{carpeta_resultados_parametro(n, nombre)}/General-*.sca"/>\n'
+        with open(general_anf, "w") as f_general_anf:
+            # Escribir las lineas
+            f_general_anf.writelines(lineas)
 
-    # Crear los gráficos
-    x = os.system(f"opp_charttool imageexport {general_anf}")
-    assert x == 0
+        # Crear los gráficos
+        x = os_system_with_print(f"opp_charttool imageexport {general_anf}")
+        assert x == 0
 
-    # Mover los gráficos a la carpeta de gráficos
-    svg_files = filter(lambda x: x.endswith(".svg"), os.listdir())
-    for svg_file in svg_files:
-        shutil.move(svg_file, f"{carpeta_gráficos(nombre)}{os.sep}{svg_file}")
+        # Mover los gráficos a la carpeta de gráficos
+        svg_files = filter(lambda x: x.endswith(".svg"), os.listdir())
+        for svg_file in svg_files:
+            shutil_move_with_print(svg_file, f"{carpeta_gráficos(nombre)}/{svg_file[:-4]} (parametro={n}).svg")
 
 
 def main(args: list):
