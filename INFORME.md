@@ -13,15 +13,19 @@ En esta trabajo se estudian y comparan 2 algoritmos de enrutamiento para redes a
 ## Índice
 
 1. [Introducción](#introducción)
+
 2. [El enrutamiento naïve](#el-enrutamiento-naive)
+
 3. [El enrutamiento mejorado](#el-enrutamiento-mejorado)
-
+   
    3.1. [Reconocimiento de la red](#reconocimiento-de-la-red)
-
+   
    3.2. [Enrutamiento de datagramas](#enrutamiento-de-datagramas)
 
 4. [Resultados](#resultados)
+
 5. [Discusiones](#discusiones)
+
 6. [Referencias](#referencias)
 
 ## Introducción
@@ -52,7 +56,7 @@ Para mejorar el enrutamiento se implementó un algoritmo sencillo que aprovecha 
 
 Inicialmente, antes de comenzar la transferencia de paquetes, cada enrutador genera un paquete de reconocimiento de red, este paquete tiene como encabezados el ID del enrutador de destino y la cantidad de saltos que hace el paquete. Cuando un enrutador genera este paquete se coloca a sí mismo como enrutador de destino, e inicia el campo de saltos en 0. Este paquete viaja por toda la red (utilizando el algoritmo naive), aumentando el campo de saltos cada vez que pasa por un enrutador, y una vez llega al enrutador de destino (que es el mismo que originó el paquete), extrayendo el valor en el campo de saltos se conoce la cantidad de enrutadores que hay en la red.
 
-La simplicidad del reconocimiento de red se da porque se sabe que la topología tiene forma de anillo, además se asume que los enrutadores están en orden, es decir, si hay 8 enrutadores los mismos están ordenados de forma que sus IDs son consecutivos. Se trabaja asumiendo que los enrutadores están ordenados debido a que incluso si los enrutadores no estuviesen en orden y por ende se tuviese que calcular la distancia a cada uno, el algoritmo seguiría funcionando de la misma manera, solamente se tendría que hacer un paso extra para conocer la distancia a cada enrutador.
+La simplicidad del reconocimiento de red se da porque se sabe que la topología tiene forma de anillo, además se asume que los enrutadores están en orden, es decir, si hay 8 enrutadores los mismos están ordenados de forma que sus IDs son consecutivos. Se trabaja con los enrutadores ordenados debido a que incluso si los enrutadores no estuviesen en orden y por ende se tuviese que calcular la distancia a cada uno, el algoritmo seguiría funcionando de la misma manera y solamente se tendría que hacer un paso extra para conocer la distancia a cada enrutador.
 
 ### Enrutamiento de datagramas
 
@@ -102,7 +106,7 @@ Para los tamaños de buffer, en ambos casos los buffers se van llenando porque l
 
 Claramente para este proyecto el algoritmo escogido es bastante limitado, el hecho de poder calcular la cantidad de nodos en la red de una manera tan sencilla se debe a que la topología tiene forma de anillo, además sabiendo esto, sabemos que la red forma una circunferencia, por ende calcular el camino más corto también es bastante sencillo y no hay necesidad de correr algún algoritmo para calcular el camino más corto como _Dijkstra_.
 
-En la implementación, los enrutadores están enumerados, y en el anillo están en orden, por lo que el escaneo de la red es mas simple. Si no estuvieran en orden, para hacer el reconocimiento de la red, se realizaría igual, solo que el paquete de reconocimiento de la red, ademas de servir para que el emisor averigüe el tamaño del anillo, serviría para que cada nodo por el que va pasando sepa la distancia que hay hasta el emisor por ese lado (y después cuando sepa el tamaño del anillo puede calcular cual es la distancia hacía el otro lado).
+En la implementación, los enrutadores están enumerados, y en el anillo están en orden, por lo que el escaneo de la red es mas simple. Si no estuvieran en orden, para hacer el reconocimiento de la red, se realizaría igual, solo que el paquete de reconocimiento de la red, además de servir para que el emisor averigüe el tamaño del anillo, serviría para que cada nodo por el que va pasando sepa la distancia que hay hasta el emisor por ese lado (y después cuando sepa el tamaño del anillo puede calcular cual es la distancia hacía el otro lado).
 
 Para implementar el algoritmo para una red con una topología más general (como la del punto estrella), se debe realizar un algoritmo más complejo, ya que no es tan sencillo saber cuantos enrutadores hay en la red, también sería necesario crear y transmitir paquetes que brinden suficiente información sobre la red, para que cada enrutador pueda crear un grafo interno de la red y correr algún algoritmo como _Dijkstra_ sobre el mismo, de esta forma puede calcular el camino más corto a cada enrutador y colocarlo en una tabla de enrutamiento.
 
