@@ -78,8 +78,8 @@ El primer caso de prueba se tienen 2 fuentes, `Nodo 0` y `Nodo 3`, y un resumide
 
 | Algoritmo Naive                                                                      | Algoritmo mejorado                                                                      |
 | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| ![Demora caso 1 naive](Gráficos_parte1_caso1/Demora%20de%20paquetes%20recibidos.svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso1/Demora%20de%20paquetes%20recibidos.svg) |
-| ![Tamaño caso 1 naive](Gráficos_parte1_caso1/Tamaos%20de%20buffer.svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso1/Tamaos%20de%20buffer.svg)               |
+| ![Demora caso 1 naive](Gráficos_parte1_caso1/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso1/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) |
+| ![Tamaño caso 1 naive](Gráficos_parte1_caso1/Tamaos%20de%20buffer%20(parametro=1.0).svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso1/Tamaos%20de%20buffer%20(parametro=1.0).svg)               |
 
 Como se puede observar, la demora máxima en el algoritmo mejorado es un 10% de la del algoritmo naive. En principio esto se debe a que en el algoritmo naive no se elige la mejor ruta para mandar desde `Nodo 2` hasta `Nodo 5`, pero también sucede que en un tramo de la ruta se mandarán paquetes provenientes tanto de `Nodo 0`, como de `Nodo 2`, lo cuál genera mucho mas retraso, porque son mas paquetes que los que esos enlaces pueden soportar.
 
@@ -95,8 +95,8 @@ Ahora, `Nodo 5` seguirá siendo el único receptor en la red, pero todos los dem
 
 | Algoritmo Naive                                                                      | Algoritmo mejorado                                                                      |
 | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| ![Demora caso 1 naive](Gráficos_parte1_caso2/Demora%20de%20paquetes%20recibidos.svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso2/Demora%20de%20paquetes%20recibidos.svg) |
-| ![Tamaño caso 1 naive](Gráficos_parte1_caso2/Tamaos%20de%20buffer.svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso2/Tamaos%20de%20buffer.svg)               |
+| ![Demora caso 1 naive](Gráficos_parte1_caso2/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso2/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) |
+| ![Tamaño caso 1 naive](Gráficos_parte1_caso2/Tamaos%20de%20buffer%20(parametro=1.0).svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso2/Tamaos%20de%20buffer%20(parametro=1.0).svg)               |
 
 Esta vez se puede contemplar que las escalas son mucho mas comparables a simple vista. En cuanto a la demora, se puede observar que los mejores casos con mínima demora son casi iguales, eso tiene sentido porque ambos tienen nodos adyacentes al destino, en el algoritmo mejorado se tienen más valores rondando por los mejores casos porque habrán mas nodos cercanos al destino que usarán la ruta optima.
 
