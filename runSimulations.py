@@ -15,8 +15,8 @@ carpeta_código = "src"
 # Parametros variables para configurar en el .ini
 parametros_variables: dict = {
     interArrivalTime:
-        f"Network.node[{{0, 2}}].app.interArrivalTime = exponential({interArrivalTime})"
-    for interArrivalTime in list(map(lambda x: round(x * 0.1, ndigits=2), range(91)))
+        f"Network.node[{{0, 1, 2, 3, 4, 6, 7}}].app.interArrivalTime = exponential({interArrivalTime})"
+    for interArrivalTime in list(map(lambda x: round(0.1 + x * 0.1, ndigits=2), range(150)))
 }
 
 parametros_gráficos_detallados = [1.0]
@@ -114,6 +114,19 @@ def exportar_gráficos(nombre: str):
         for svg_file in svg_files:
             shutil_move_with_print(svg_file, f"{carpeta_gráficos(nombre)}/{svg_file[:-4]} (parametro={n}).svg")
 
+def gráficos_matplotlib(nombre_simulacion: str):
+    """
+        Crea los gráficos de `gráficos.py`
+    """
+    # Crear json
+    archivo_json = f"datos_{nombre_simulacion}.json"
+    x = os.system(f"opp_scavetool export {carpeta_resultados(nombre_simulacion)}/*/*.sca -o {archivo_json}")
+    assert x == 0
+
+    # Llamar a la función que hace los gráficos
+    import gráficos
+    gráficos.gráficos(archivo_json, nombre_simulacion)
+
 
 def main(args: list):
     if len(args) != 1:
@@ -122,6 +135,7 @@ def main(args: list):
     nombre_simulación: str = args[0]
     correr_simulaciones(nombre_simulación)
     exportar_gráficos(nombre_simulación)
+    gráficos_matplotlib(nombre_simulación)
 
 if __name__ == "__main__":
     # Obtener argumentos
