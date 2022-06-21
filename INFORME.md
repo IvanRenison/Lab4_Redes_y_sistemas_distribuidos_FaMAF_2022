@@ -14,13 +14,9 @@ En esta trabajo se estudian y comparan 2 algoritmos de enrutamiento para redes a
 
 1. [Introducción](#introducción)
 
-2. [El enrutamiento naïve](#el-enrutamiento-naive)
+2. [Algoritmo naive](#algoritmo-naive)
 
-3. [El enrutamiento mejorado](#el-enrutamiento-mejorado)
-   
-   3.1. [Reconocimiento de la red](#reconocimiento-de-la-red)
-   
-   3.2. [Enrutamiento de datagramas](#enrutamiento-de-datagramas)
+3. [Algoritmo mejorado](#algoritmo-mejorado)
 
 4. [Resultados](#resultados)
 
@@ -81,11 +77,11 @@ La red tiene algunos parámetros que se pueden varias:
 
 - Destino de los paquetes.
 
-Para las simulaciones que se aran, el tamaño de la red está siempre en 8 nodos y la velocidad de los enlaces en 1 paquete/segundo.
+Para las simulaciones que se harán, el tamaño de la red está siempre en 8 nodos y la velocidad de los enlaces en 1 paquete/segundo.
 
 A continuación se realizará una comparación directa del desempeño de ambos algoritmos en 2 casos de prueba distintos, ambos con un intervalo de generación de 1 segundo.
 
-Las métricas que serán analizadas son el tiempo que tardan los paquetes desde que salen hasta que llegan (demora) y los tamaños que alcanzan los búffers de los nodos (tamaños de buffer) durante el tiempo de simulación.
+Las métricas que serán analizadas son el tiempo que tardan los paquetes desde que salen hasta que llegan (demora) y los tamaños que alcanzan los buffers de los nodos (tamaños de buffer) durante el tiempo de simulación.
 
 Pero primero, recordemos lo que hace cada algoritmo.
 
@@ -93,7 +89,7 @@ En resumidas cuentas, el algoritmo naive siempre mandará sus paquetes en *senti
 
 ### Caso de estudio 1
 
-El primer caso de prueba se tienen 2 fuentes, `Nodo 0` y `Nodo 3`, y un resumidero, `Nodo 5` en un anillo de tamaño 8, revisando el [diagrama](#introducción) se puede ver que el mejor camino que puede tomar `Nodo 0` es en *sentido reloj*, mientras que para `Nodo 2` es *sentido contra-reloj*.
+El primer caso de prueba se tienen 2 fuentes, `Nodo 0` y `Nodo 3`, y un receptor, `Nodo 5` en un anillo de tamaño 8, revisando el [diagrama](#introducción) se puede ver que el mejor camino que puede tomar `Nodo 0` es en *sentido reloj*, mientras que para `Nodo 2` es *sentido contra-reloj*.
 
 | Algoritmo naive                                                                                        | Algoritmo mejorado                                                                                        |
 | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
@@ -131,11 +127,11 @@ A continuación se compararan ambos algoritmos en el caso de que todos los nodos
 
 Sea:
 
-_n_ el tamaño de la red
+_n_ el tamaño de la red.
 
-_g_ el intervalo de generación de paquetes de los nodos (en segundos)
+_g_ el intervalo de generación de paquetes de los nodos (en segundos).
 
-_x_ la capacidad de los enlaces (en paquetes/segundo)
+_x_ la capacidad de los enlaces (en paquetes/segundo).
 
 Notar que para ambos algoritmos:
 
@@ -147,13 +143,13 @@ Notar que para ambos algoritmos:
 
 Al ir todos los paquetes generados en la misma dirección, todos los paquetes tienen que pasar por el enlace mas cercano al destino en esa dirección, por lo que ese enlace tiene una carga de (_n_ - 1)/_g_ paquetes (el /segundos está en el /_g_).
 
-Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/_g_ paquetes < _x_. Que es equivalente a (_n_ - 1)/_x_ < _g_/paquetes.
+Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/_g_ paquetes < _x_, que es equivalente a (_n_ - 1)/_x_ < _g_/paquetes.
 
 **Algoritmo mejorado**
 
-Ahora la mitad de los paquetes van en una dirección y la` otra mitad en la otra dirección, por lo que cada uno de los enlaces mas cercanos al receptor tiene una carga de (_n_ - 1)/(2*_g_) paquetes.
+Ahora la mitad de los paquetes van en una dirección y la otra mitad en la otra dirección, por lo que cada uno de los enlaces mas cercanos al receptor tiene una carga de (_n_ - 1)/(2\*_g_) paquetes.
 
-Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/(2*_g_) paquetes < _x_. Que es equivalente a (_n_ - 1)/(2*_x_) < _g_/paquetes.
+Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/(2\*_g_) paquetes < _x_, que es equivalente a (_n_ - 1)/(2\*_x_) < _g_/paquetes.
 
 O sea que el algoritmo mejorado soporta el doble de carga que el naive.
 
@@ -169,7 +165,7 @@ Y se hará variar _g_.
 
 En el algoritmo naive, deberían llegar casi todos los paquetes cuando _g_ > (_n_ - 1)/_x_ paquetes = (8 - 1)/1 segundos = 7 segundos.
 
-En el algoritmo mejorado, deberían llegar casi todos los paquetes cuando _g_ > (_n_ - 1)/(2*_x_) paquetes = (8 - 1)/(2*1) segundos = 3.5 segundos.
+En el algoritmo mejorado, deberían llegar casi todos los paquetes cuando _g_ > (_n_ - 1)/(2\*_x_) paquetes = (8 - 1)/(2\*1) segundos = 3.5 segundos.
 
 A continuación el gráfico para cada simulación con _g_ en el eje horizontal y la proporción de paquetes que llegan bien en el eje vertical.
 
