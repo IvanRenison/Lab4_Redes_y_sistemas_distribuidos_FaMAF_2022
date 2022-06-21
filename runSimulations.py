@@ -16,7 +16,7 @@ carpeta_código = "src"
 parametros_variables: dict = {
     interArrivalTime:
         f"Network.node[{{0, 1, 2, 3, 4, 6, 7}}].app.interArrivalTime = exponential({interArrivalTime})"
-    for interArrivalTime in list(map(lambda x: round(0.1 + x * 0.1, ndigits=2), range(150)))
+    for interArrivalTime in list(map(lambda x: round(0.02 + x * 0.02, ndigits=3), range(750)))
 }
 
 parametros_gráficos_detallados = [1.0]
