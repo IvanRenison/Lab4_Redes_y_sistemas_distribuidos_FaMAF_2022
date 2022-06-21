@@ -5,6 +5,7 @@
 #include <omnetpp.h>
 #include <packet_m.h>
 #include <time.h>
+#include <unordered_map>
 
 using namespace omnetpp;
 
@@ -13,6 +14,7 @@ private:
     // Topology
     unsigned int nodeCount {0};
     bool topologyRecognized {false};
+    std::unordered_map<int, int> distances;
 
     // Queue of packets
     cQueue buffer;
@@ -67,23 +69,20 @@ void Net::sendPacket(Packet *pkt) {
     int destination = pkt->getDestination();
     int source = this->getParentModule()->getIndex();
 
-    int antiClockwiseDistance = (destination - source) % nodeCount;
-    int clockwiseDistance = nodeCount - antiClockwiseDistance;
+    int out = 0;
 
-    int out;
-
-    // Checking if the shortest path is clockwise or counter clockwise
-    if (antiClockwiseDistance > clockwiseDistance) {
-        // Clock-wise is the best route
-        out = 0;
-    }
-    else if (antiClockwiseDistance < clockwiseDistance) {
-        // Counter-clock-wise is the best route
-        out = 1;
-    }
-    else {
-        // Either route is the best, choose randomly
-        out = rand() % 2;
+    if (topologyRecognized) {
+        // Checking if the shortest path is clockwise or counter clockwise
+        int destination = pkt->getDestination();
+        // Counter-clock-wise distance
+        int distance = distances[destination];
+        if (distance < nodeCount - distance) {
+            // Counter-clock-wise is the best route
+            out = 1;
+        } else if (distance == nodeCount - distance) {
+            // Either route is the best, choose randomly
+            out = rand() % 2;
+        }
     }
 
     send(pkt, "toLnk$o", out);
@@ -116,6 +115,7 @@ void Net::handleMessage(cMessage *msg) {
         // (note that these is executed for every kind of packet)
 
         if (pkt->getKind() == RECOGNITION_KIND) {
+            distances.insert({pkt->getSource(), pkt->getHopCount()});
             pkt->setHopCount(pkt->getHopCount() + 1);
         }
 
