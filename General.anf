@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <analysis version="2">
     <inputs>
-        <input pattern="Resultados_parte2_caso2/1.0/General-*.vec"/>
-        <input pattern="Resultados_parte2_caso2/1.0/General-*.sca"/>
+        <input pattern="Resultados_parte2_caso3/1.0/General-*.vec"/>
+        <input pattern="Resultados_parte2_caso3/1.0/General-*.sca"/>
     </inputs>
     <charts>
         <chart icon="icons/full/obj/linechart.png" id="877346618" name="Tamaños de buffer" template="linechart_native" type="LINE">
