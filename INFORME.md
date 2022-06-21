@@ -64,7 +64,19 @@ En esta parte se escoge el camino más corto, primero calculamos la distancia co
 
 ## Resultados
 
-A continuación se realizará una comparación directa del desempeño de ambos algoritmos en 2 casos de prueba distintos.
+La red tiene algunos parámetros que se pueden varias:
+
+- Tamaño de la red (la cantidad de nodos del anillo).
+
+- Velocidad de los enlaces (la cantidad de paquetes por segundo que pueden pasar por cada enlace).
+
+- Intervalo de generación (tiempo cada el cual los nodos generan un paquete).
+
+- Destino de los paquetes.
+
+Para las simulaciones que se aran, el tamaño de la red está siempre en 8 nodos y la velocidad de los enlaces en 1 paquete/segundo.
+
+A continuación se realizará una comparación directa del desempeño de ambos algoritmos en 2 casos de prueba distintos, ambos con un intervalo de generación de 1 segundo.
 
 Las métricas que serán analizadas son el tiempo que tardan los paquetes desde que salen hasta que llegan (demora) y los tamaños que alcanzan los búffers de los nodos (tamaños de buffer) durante el tiempo de simulación.
 
@@ -76,8 +88,8 @@ En resumidas cuentas, el algoritmo naive siempre mandará sus paquetes en *senti
 
 El primer caso de prueba se tienen 2 fuentes, `Nodo 0` y `Nodo 3`, y un resumidero, `Nodo 5` en un anillo de tamaño 8, revisando el [diagrama](#introducción) se puede ver que el mejor camino que puede tomar `Nodo 0` es en *sentido reloj*, mientras que para `Nodo 2` es *sentido contra-reloj*.
 
-| Algoritmo Naive                                                                      | Algoritmo mejorado                                                                      |
-| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Algoritmo naive                                                                                        | Algoritmo mejorado                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | ![Demora caso 1 naive](Gráficos_parte1_caso1/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso1/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) |
 | ![Tamaño caso 1 naive](Gráficos_parte1_caso1/Tamaos%20de%20buffer%20(parametro=1.0).svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso1/Tamaos%20de%20buffer%20(parametro=1.0).svg)               |
 
@@ -93,14 +105,72 @@ Hasta ahora se mostró el diferente impacto en la red que genera cada algoritmo,
 
 Ahora, `Nodo 5` seguirá siendo el único receptor en la red, pero todos los demás nodos serán emisores, como consecuencia esperable los buffers de los nodos se verán mucho mas ocupados que antes.
 
-| Algoritmo Naive                                                                      | Algoritmo mejorado                                                                      |
-| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Algoritmo naive                                                                                        | Algoritmo mejorado                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | ![Demora caso 1 naive](Gráficos_parte1_caso2/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) | ![Demora caso 1 mejorado](Gráficos_parte2_caso2/Demora%20de%20paquetes%20recibidos%20(parametro=1.0).svg) |
 | ![Tamaño caso 1 naive](Gráficos_parte1_caso2/Tamaos%20de%20buffer%20(parametro=1.0).svg)               | ![Tamaño caso 1 mejorado](Gráficos_parte2_caso2/Tamaos%20de%20buffer%20(parametro=1.0).svg)               |
 
 Esta vez se puede contemplar que las escalas son mucho mas comparables a simple vista. En cuanto a la demora, se puede observar que los mejores casos con mínima demora son casi iguales, eso tiene sentido porque ambos tienen nodos adyacentes al destino, en el algoritmo mejorado se tienen más valores rondando por los mejores casos porque habrán mas nodos cercanos al destino que usarán la ruta optima.
 
 Para los tamaños de buffer, en ambos casos los buffers se van llenando porque la red está sobrecargada, pero en el algoritmo mejorado se llenan un poco mas lento.
+
+Sin embargo, en ese caso de estudio, para ambos algoritmos la red está saturada, y va habiendo paquetes que se acumulan en los buffers. Entonces, es natural preguntar, ¿hasta cuanta carga soporta la red con cada algoritmo?
+
+A continuación se hará esa comparación
+
+#### Comparación de capacidad máxima
+
+A continuación se compararan ambos algoritmos en el caso de que todos los nodos estén enviando paquetes al mismo destino.
+
+Sea:
+
+_n_ el tamaño de la red
+
+_g_ el intervalo de generación de paquetes de los nodos (en segundos)
+
+_x_ la capacidad de los enlaces (en paquetes/segundo)
+
+Notar que para ambos algoritmos:
+
+- La velocidad de generación de cada nodo es 1/_g_ paquetes
+
+- Entre todos los nodos se van a estar generando (_n_ - 1)/_g_ paquetes
+
+**Algoritmo naive**
+
+Al ir todos los paquetes generados en la misma dirección, todos los paquetes tienen que pasar por el enlace mas cercano al destino en esa dirección, por lo que ese enlace tiene una carga de (_n_ - 1)/_g_ paquetes (el /segundos está en el /_g_).
+
+Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/_g_ paquetes < _x_. Que es equivalente a (_n_ - 1)/_x_ < _g_/paquetes.
+
+**Algoritmo mejorado**
+
+Ahora la mitad de los paquetes van en una dirección y la` otra mitad en la otra dirección, por lo que cada uno de los enlaces mas cercanos al receptor tiene una carga de (_n_ - 1)/(2*_g_) paquetes.
+
+Esto significa que para que la red no esté sobre cargada hace falta que (_n_ - 1)/(2*_g_) paquetes < _x_. Que es equivalente a (_n_ - 1)/(2*_x_) < _g_/paquetes.
+
+O sea que el algoritmo mejorado soporta el doble de carga que el naive.
+
+Para comprobar que esas deducciones son correctas, se hará el siguiente experimento:
+
+Se fijara:
+
+_n_ = 8
+
+_x_ = 1 paquete/segundo
+
+Y se hará variar _g_.
+
+En el algoritmo naive, deberían llegar casi todos los paquetes cuando _g_ > (_n_ - 1)/_x_ paquetes = (8 - 1)/1 segundos = 7 segundos.
+
+En el algoritmo mejorado, deberían llegar casi todos los paquetes cuando _g_ > (_n_ - 1)/(2*_x_) paquetes = (8 - 1)/(2*1) segundos = 3.5 segundos.
+
+A continuación el gráfico para cada simulación con _g_ en el eje horizontal y la proporción de paquetes que llegan bien en el eje vertical.
+
+| Algoritmo naive                                                                                                                                             | Algoritmo mejorado                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Gráfico de intervalo de generación vs aprovechamiento.svg](./Gráficos_parte1_caso2/Gráfico%20de%20intervalo%20de%20generación%20vs%20aprovechamiento.svg) | ![Gráfico de intervalo de generación vs aprovechamiento.svg](./Gráficos_parte2_caso2/Gráfico%20de%20intervalo%20de%20generación%20vs%20aprovechamiento.svg) |
+
+Como se puede ver, mas o menos coincide con lo calculado teóricamente.
 
 ## Discusiones
 
