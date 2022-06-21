@@ -22,17 +22,14 @@ def obtener_paquetes_enviadosYRecibidos(json_data: dict) -> dict:
         interArrivalTime_number_text = interArrivalTime_text[12:-1]
         interArrivalTime = float(interArrivalTime_number_text)
 
-        # Obtener paquetes recibidos (del nodo 5)
-        assert sim["scalars"][2*5+1]["name"] == "Received packets"
-        paquetes_recibidos = int(sim["scalars"][2*5+1]["value"])
-        assert paquetes_recibidos > 0
-
-        # Obtener suma de paquetes enviados de los otros nodos
+        # Obtener suma de paquetes enviados y recividos
+        paquetes_recibidos = 0
         paquetes_enviados = 0
         for module in sim["scalars"]:   
             if module["name"] == "Sent packets":
                 paquetes_enviados += int(module["value"])
-
+            if module["name"] == "Received packets":
+                paquetes_recibidos += int(module["value"])
 
         res[interArrivalTime] = (paquetes_enviados, paquetes_recibidos)
     
