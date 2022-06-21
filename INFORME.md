@@ -60,7 +60,14 @@ La simplicidad del reconocimiento de red se da porque se sabe que la topología 
 
 ### Enrutamiento de datagramas
 
-En esta parte se escoge el camino más corto, primero calculamos la distancia como `distancia = |emisor - destino|` (utilizando el número del ID porque los enrutadores están ordenados en el sentido de las agujas del reloj). Con la distancia,  sí `distancia < cantidad de enrutadores/2` entonces el camino más corto es el el sentido contrario a las agujas del reloj, si `distancia > cantidad de enrutadores/2` el camino más corto es en el sentido de las agujas del reloj y si ambos son iguales, la distancia es le misma en ambos sentidos y por ende se escoge al azar por que camino enviar el paquete, de forma que se distribuye la carga.
+En esta parte se escoge el camino más corto, primero se calcula la distancia en el sentido del reloj y en el sentido contrario:
+
+```c
+antiClockwiseDistance = (destination - source) % nodeCount;
+clockwiseDistance = nodeCount - antiClockwiseDistance;
+```
+
+Y luego se manda en el sentido que mas corto sea, y si en ambos sentidos es lo mismo se escoge al azar por que camino enviar el paquete, de forma que se distribuye la carga.
 
 ## Resultados
 
