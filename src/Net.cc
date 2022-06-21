@@ -112,8 +112,8 @@ void Net::handleMessage(cMessage *msg) {
         send(pkt, "toApp$o");
     } else if (pkt->arrivedOn("toLnk$i")) {
         // The packet is from other node
-        // Send to the other gate that the one it came in
-        // (note that these is executed for every kind of packet)
+        // Send to the other gate 
+        // (note that this is executed for every kind of packet)
 
         if (pkt->getKind() == RECOGNITION_KIND) {
             pkt->setHopCount(pkt->getHopCount() + 1);
@@ -126,7 +126,7 @@ void Net::handleMessage(cMessage *msg) {
             send(pkt, "toLnk$o", 0);
         }
     } else {
-        // It's a packet from de app
+        // It's a packet from the app
         assert(pkt->arrivedOn("toApp$i"));
 
         buffer.insert(pkt);

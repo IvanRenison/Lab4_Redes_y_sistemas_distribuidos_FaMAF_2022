@@ -67,7 +67,7 @@ antiClockwiseDistance = (destination - source) % nodeCount;
 clockwiseDistance = nodeCount - antiClockwiseDistance;
 ```
 
-Y luego se manda en el sentido que mas corto sea, y si en ambos sentidos es lo mismo se escoge al azar por que camino enviar el paquete, de forma que se distribuye la carga.
+Y luego se manda en el sentido que más corto sea, y si en ambos sentidos es lo mismo se escoge al azar por que camino enviar el paquete, de forma que se distribuye la carga.
 
 ## Resultados
 
@@ -183,7 +183,7 @@ Como se puede ver, mas o menos coincide con lo calculado teóricamente.
 
 Claramente para este proyecto el algoritmo escogido es bastante limitado, el hecho de poder calcular la cantidad de nodos en la red de una manera tan sencilla se debe a que la topología tiene forma de anillo, además sabiendo esto, sabemos que la red forma una circunferencia, por ende calcular el camino más corto también es bastante sencillo y no hay necesidad de correr algún algoritmo para calcular el camino más corto como _Dijkstra_.
 
-En la implementación, los enrutadores están enumerados, y en el anillo están en orden, por lo que el escaneo de la red es mas simple. Si no estuvieran en orden, para hacer el reconocimiento de la red, se realizaría igual, solo que el paquete de reconocimiento de la red, además de servir para que el emisor averigüe el tamaño del anillo, serviría para que cada nodo por el que va pasando sepa la distancia que hay hasta el emisor por ese lado (y después cuando sepa el tamaño del anillo puede calcular cual es la distancia hacía el otro lado).
+En la implementación, los enrutadores están enumerados, y en el anillo están en orden, por lo que el escaneo de la red es mas simple. Si no estuvieran en orden, para hacer el reconocimiento de la red, se realizaría igual, solo que el paquete de reconocimiento de la red, además de servir para que el emisor averigüe el tamaño del anillo, serviría para que cada nodo por el que va pasando sepa la distancia que hay hasta el emisor por ese lado (y después cuando sepa el tamaño del anillo puede calcular cual es la distancia hacía el otro lado). Una implementación de esto se puede observar en la rama ```AnilloDesordenado```, en donde cada nodo guarda un map que contiene la distancia a cada nodo de la red.
 
 Para implementar el algoritmo para una red con una topología más general (como la del punto estrella), se debe realizar un algoritmo más complejo, ya que no es tan sencillo saber cuantos enrutadores hay en la red, también sería necesario crear y transmitir paquetes que brinden suficiente información sobre la red, para que cada enrutador pueda crear un grafo interno de la red y correr algún algoritmo como _Dijkstra_ sobre el mismo, de esta forma puede calcular el camino más corto a cada enrutador y colocarlo en una tabla de enrutamiento.
 
