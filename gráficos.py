@@ -16,7 +16,7 @@ def obtener_paquetes_enviadosYRecibidos(json_data: dict) -> dict:
     res = {}
     for sim in json_data.values():
 
-        interArrivalTime_text = sim["config"][4]["Network.node[{0, 1, 2, 3, 4, 6, 7}].app.interArrivalTime"]
+        interArrivalTime_text = sim["config"][4]["Network.node[*].app.interArrivalTime"]
         # Chequear que se haya obtenido mas o menos lo correcto
         assert interArrivalTime_text.startswith("exponential(") and interArrivalTime_text.endswith(")")
         interArrivalTime_number_text = interArrivalTime_text[12:-1]

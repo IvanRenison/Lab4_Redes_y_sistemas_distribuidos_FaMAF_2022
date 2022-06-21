@@ -15,7 +15,7 @@ carpeta_código = "src"
 # Parametros variables para configurar en el .ini
 parametros_variables: dict = {
     interArrivalTime:
-        f"Network.node[{{0, 1, 2, 3, 4, 6, 7}}].app.interArrivalTime = exponential({interArrivalTime})"
+        f"Network.node[*].app.interArrivalTime = exponential({interArrivalTime})"
     for interArrivalTime in list(map(lambda x: round(0.02 + x * 0.02, ndigits=3), range(750)))
 }
 

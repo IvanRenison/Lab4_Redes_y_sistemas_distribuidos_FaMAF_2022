@@ -60,8 +60,16 @@ void App::handleMessage(cMessage *msg) {
         // create new packet
         Packet *pkt = new Packet("packet",this->getParentModule()->getIndex());
         pkt->setByteLength(par("packetByteSize"));
-        pkt->setSource(this->getParentModule()->getIndex());
-        pkt->setDestination(par("destination"));
+
+        int source = this->getParentModule()->getIndex();
+        pkt->setSource(source);
+
+        int destination;
+        do {
+            destination = par("destination");
+        }
+        while (destination == source);
+        pkt->setDestination(destination);
 
         // send to net layer
         send(pkt, "toNet$o");
